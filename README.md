@@ -1,5 +1,6 @@
 These files have been tested on Xilinx Vivado. 
-The project has the Verilog code that works in two different interrupt modes, either priority mode or Polling mode. 
+The project has the Verilog code that works in two different interrupt modes, either priority mode or Polling mode in Verilog.
+
 
 
 
