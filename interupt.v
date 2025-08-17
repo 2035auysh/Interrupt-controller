@@ -35,16 +35,17 @@ parameter POLLING  = 1'b1;
 
 reg [1:0] value [3:0];
 
-reg [1:0] poll_state;
-parameter poll_0 = 2'b00,
-          poll_1 = 2'b01,
-          poll_2 = 2'b10,
-          poll_3 = 2'b11;
+reg [2:0] poll_state;
+parameter poll_0 = 3'b000,
+          poll_1 = 3'b001,
+          poll_2 = 3'b010,
+          poll_3 = 3'b011,
+          poll_4 = 3'b100;
           
           
 reg [1:0] next_value [3:0];
 reg [3:0] next_out;
-reg [1:0] next_poll_state;
+reg [2:0] next_poll_state;
 
 
 integer i;
@@ -95,43 +96,52 @@ always @(*) begin
               end 
               
               
-         else begin     
+         else begin 
                 next_out = 4'b0000;
                 
                 case (poll_state)   
-                    poll_0: begin 
-                        if(inp[0])begin
+                     poll_0: begin                         
+                            if(inp==4'b0)begin
+                                next_out = 4'b0000;
+                                next_poll_state = poll_0;end
+                             else begin 
+                             next_out = 4'b0;
+                             next_poll_state = poll_1;
+                             end
+                             end
+                    poll_1: begin                         
+                         if(inp[0])begin
                             next_out = 4'b0001;
-                            next_poll_state = poll_0;end
-                         else begin 
-                         next_out = 4'b0;
-                         next_poll_state = poll_1;
-                         end
-                         end 
-                    poll_1: begin   
-                         if(inp[1]) begin
-                            next_out = 4'b0010;
                             next_poll_state = poll_1;end
                          else begin 
-                         next_out = 4'b0; 
-                         next_poll_state = poll_2; end
+                         next_out = 4'b0;
+                         next_poll_state = poll_2;
+                         end
                          end 
                     poll_2: begin   
+                         if(inp[1]) begin
+                            next_out = 4'b0010;
+                            next_poll_state = poll_2;end
+                         else begin 
+                         next_out = 4'b0; 
+                         next_poll_state = poll_3; end
+                         end 
+                    poll_3: begin   
                          if(inp[2])begin
                             next_out = 4'b0100;
-                            next_poll_state = poll_2;end
+                            next_poll_state = poll_3;end
                          else begin next_out = 4'b0;
-                         next_poll_state = poll_3; end 
+                         next_poll_state = poll_4; end 
                          end                          
-                    poll_3: begin   
+                    poll_4: begin   
                          if(inp[3])begin
                             next_out = 4'b1000;
-                            next_poll_state = poll_3;end
+                            next_poll_state = poll_4;end
                          else begin 
                          next_out = 4'b0; 
                          next_poll_state = poll_0; end 
                          end                          
-                   default : begin  
+                   default: begin  
                            next_out = 4'b0;
                            next_poll_state =  poll_0; end endcase
 end 
@@ -139,4 +149,3 @@ end
 
 
 endmodule
-
